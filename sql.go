@@ -86,7 +86,6 @@ func (p Geometry[T]) Value() (driver.Value, error) {
 func (p Geometry[T]) GormDataType() string {
 	srid := strconv.Itoa(SRID)
 
-	// var geomInstance T
 	switch any(p.Geom).(type) {
 	case *geom.Point:
 		return "Geometry(Point, " + srid + ")"
