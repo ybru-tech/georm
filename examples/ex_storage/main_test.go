@@ -5,20 +5,14 @@ import (
 	"os"
 	"testing"
 
-	"gorm.io/gorm"
-
 	"github.com/ybru-tech/georm/examples/testutil"
 )
 
-var (
-	db      *gorm.DB
-	storage *Storage
-)
+var storage *Storage
 
 func TestMain(m *testing.M) {
 	conn, closer := testutil.InitTempDB()
 
-	db = conn
 	storage = NewStorage(conn)
 
 	if err := storage.MigrationTables(); err != nil {
