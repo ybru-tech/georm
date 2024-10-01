@@ -18,7 +18,7 @@ func InitTempDB() (db *gorm.DB, closer func()) {
 	var (
 		user     = "postgres"
 		password = "secret"
-		dbName   = "eda_sandbox_tests"
+		dbName   = "temp_db_for_tests"
 	)
 
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
