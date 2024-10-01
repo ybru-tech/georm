@@ -12,25 +12,20 @@ import (
 	"github.com/twpayne/go-geom/encoding/wkbcommon"
 )
 
-func ExamplePolygon_String() {
-	fmt.Println(Polygon{
+func ExampleGeometry_String() {
+	point := Geometry[geom.T]{
+		Geom: geom.NewPoint(geom.XY).MustSetCoords(geom.Coord{42, 42}),
+	}
+
+	polygon := Geometry[geom.T]{
 		Geom: geom.NewPolygon(geom.XY).MustSetCoords(
-			[][]geom.Coord{
-				{{42, 42}, {1, 1}, {2, 2}, {42, 42}},
-			}),
-	}.String())
+			[][]geom.Coord{{{42, 42}, {1, 1}, {2, 2}, {42, 42}}}),
+	}
 
-	// Output: POLYGON ((42 42, 1 1, 2 2, 42 42))
-}
-
-func ExamplePoint_String() {
-	fmt.Println(Point{
-		Geom: geom.NewPoint(geom.XY).MustSetCoords(
-			geom.Coord{42, 42},
-		).SetSRID(4326),
-	}.String())
-
+	fmt.Println(point.String())
+	fmt.Println(polygon.String())
 	// Output: POINT (42 42)
+	// POLYGON ((42 42, 1 1, 2 2, 42 42))
 }
 
 func TestGeometryStringExpectCannotMarshal(t *testing.T) {

@@ -36,7 +36,7 @@ type (
 func New[T geom.T](geom T) Geometry[T] { return Geometry[T]{geom} }
 
 // Scan impl sql.Scanner
-func (p *Geometry[T]) Scan(value interface{}) (err error) {
+func (g *Geometry[T]) Scan(value interface{}) (err error) {
 	var (
 		wkb []byte
 		ok  bool
@@ -60,7 +60,7 @@ func (p *Geometry[T]) Scan(value interface{}) (err error) {
 		return err
 	}
 
-	p.Geom, ok = geometryT.(T)
+	g.Geom, ok = geometryT.(T)
 	if !ok {
 		return ErrUnexpectedValueType
 	}
@@ -69,13 +69,13 @@ func (p *Geometry[T]) Scan(value interface{}) (err error) {
 }
 
 // Value impl driver.Valuer
-func (p Geometry[T]) Value() (driver.Value, error) {
-	if geom.T(p.Geom) == nil {
+func (g Geometry[T]) Value() (driver.Value, error) {
+	if geom.T(g.Geom) == nil {
 		return nil, nil
 	}
 
 	sb := &bytes.Buffer{}
-	if err := ewkb.Write(sb, binary.LittleEndian, p.Geom); err != nil {
+	if err := ewkb.Write(sb, binary.LittleEndian, g.Geom); err != nil {
 		return nil, err
 	}
 
@@ -83,10 +83,10 @@ func (p Geometry[T]) Value() (driver.Value, error) {
 }
 
 // GormDataType impl schema.GormDataTypeInterface
-func (p Geometry[T]) GormDataType() string {
+func (g Geometry[T]) GormDataType() string {
 	srid := strconv.Itoa(SRID)
 
-	switch any(p.Geom).(type) {
+	switch any(g.Geom).(type) {
 	case *geom.Point:
 		return "Geometry(Point, " + srid + ")"
 	case *geom.LineString:
@@ -106,10 +106,11 @@ func (p Geometry[T]) GormDataType() string {
 	}
 }
 
-func (p Geometry[T]) String() string {
-	if geomWkt, err := wkt.Marshal(p.Geom); err == nil {
+// String returns geometry formatted using WKT format
+func (g Geometry[T]) String() string {
+	if geomWkt, err := wkt.Marshal(g.Geom); err == nil {
 		return geomWkt
 	}
 
-	return fmt.Sprintf("cannot marshal geometry: %T", p.Geom)
+	return fmt.Sprintf("cannot marshal geometry: %T", g.Geom)
 }
